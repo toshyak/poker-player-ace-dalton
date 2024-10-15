@@ -1,5 +1,8 @@
 export class Player {
-  public async betRequest(gameState: any, betCallback: (bet: number) => void): Promise<void> {
+  public async betRequest(
+    gameState: any,
+    betCallback: (bet: number) => void
+  ): Promise<void> {
     //get our player
     const myPlayer = gameState.players.find((player: any) => player.hole_cards);
 
@@ -14,40 +17,46 @@ export class Player {
     const minimumRaise = gameState.minimum_raise;
     const pot = gameState.pot;
 
-    const knownCards = [...communityCards, ...holeCards]
-    if (knownCards.length >= 5) {
+    if (communityCards.length > 0) {
+      // community cards are available
+      const knownCards = [...communityCards, ...holeCards];
+      if (knownCards.length >= 5) {
         type Hand = Array<{ rank: string; suit: string }>;
         const checkRanks = async (cards: Hand) => {
-            const query = new URLSearchParams()
-            query.set('cards', JSON.stringify(cards))
+          const query = new URLSearchParams();
+          query.set("cards", JSON.stringify(cards));
 
-            const response = await fetch(`https://rainman.leanpoker.org/?${query.toString()}`)
-            if (response.ok) {
-                const data = await response.json()
-                const rank = data.rank
-                betCallback(rank * 100)
-            }
+          const response = await fetch(
+            `https://rainman.leanpoker.org/?${query.toString()}`
+          );
+          if (response.ok) {
+            const data = await response.json();
+            const rank = data.rank;
+            betCallback(rank * 100);
+          }
         };
-        await checkRanks(knownCards)
-        return
-    }
-
-    // Calculate hand strength (simplified: high cards or pair)
-    const isStrongHand = this.hasStrongHand(holeCards, communityCards);
-
-    // If the hand is strong, bet aggressively
-    if (isStrongHand) {
-      const raiseAmount = currentBuyIn + minimumRaise;
-      betCallback(raiseAmount);
+        await checkRanks(knownCards);
+      }
     } else {
-      // Bluff occasionally or fold
-      const shouldBluff = Math.random() > 0.8; // 20% bluff
-      if (shouldBluff) {
-        const bluffRaise = currentBuyIn + minimumRaise * 2;
-        betCallback(bluffRaise);
+      // pre-flop
+
+      // Calculate hand strength (simplified: high cards or pair)
+      const isStrongHand = this.hasStrongHand(holeCards, communityCards);
+
+      // If the hand is strong, bet aggressively
+      if (isStrongHand) {
+        const raiseAmount = currentBuyIn + minimumRaise;
+        betCallback(raiseAmount);
       } else {
-        // Fold if weak hand
-        betCallback(0);
+        // Bluff occasionally or fold
+        const shouldBluff = Math.random() > 0.8; // 20% bluff
+        if (shouldBluff) {
+          const bluffRaise = currentBuyIn + minimumRaise * 2;
+          betCallback(bluffRaise);
+        } else {
+          // Fold if weak hand
+          betCallback(0);
+        }
       }
     }
   }
