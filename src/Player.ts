@@ -61,11 +61,11 @@ export class Player {
             console.log('STRATEGY: pre-flop');
 
             // Calculate hand strength (simplified: high cards or pair)
-            const isStrongHand = this.hasStrongHand(holeCards, communityCards);
+            const strongHandValue = this.getStrongHandValue(holeCards, communityCards);
 
             // If the hand is strong, bet aggressively
-            if (isStrongHand) {
-                const raiseAmount = currentBuyIn + minimumRaise;
+            if (strongHandValue > 0) {
+                const raiseAmount = currentBuyIn + minimumRaise * strongHandValue;
                 betCallback(raiseAmount);
             } else {
                 // Bluff occasionally or fold
@@ -82,7 +82,10 @@ export class Player {
     }
 
     // Simplified hand strength calculation
-    private hasStrongHand(holeCards: any[], communityCards: any[]): boolean {
+    private getStrongHandValue(holeCards: any[], communityCards: any[]): number {
+        
+        let strength = 0
+      
         const highRanks = ['10', 'J', 'Q', 'K', 'A'];
 
         // Look for pairs, high cards, or potential straights/flushes
@@ -100,7 +103,11 @@ export class Player {
         );
         const hasSameSuit = holeSuits[0] === holeSuits[1];
 
-        return hasPair || hasHighCard || hasSameSuit;
+        if(hasPair) { strength = strength + 2 }
+        if(hasHighCard) { strength++ }
+        if(hasSameSuit) { strength++ }
+
+        return strength
     }
 
     public showdown(gameState: any): void {
