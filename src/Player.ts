@@ -100,13 +100,12 @@ export class Player {
         const holeSuits = holeCards.map((card) => card.suit);
 
         // Check for a pair in hole cards or with community cards
-        const hasPair =
-            holeRanks[0] === holeRanks[1] ||
-            holeCards.every((card) => holeRanks.includes(card.rank));
+        const hasPair = holeRanks[0] === holeRanks[1]
 
         const hasHighCard = holeCards.some((card) =>
             highRanks.includes(card.rank)
         );
+
         const hasTopCard = holeCards.some((card) =>
             topRanks.includes(card.rank)
         );
@@ -118,8 +117,12 @@ export class Player {
         const hasSameSuit = holeSuits[0] === holeSuits[1];
 
         if (hasPair) {
-            strength = strength + 2;
+            strength++;
         }
+        if (hasHighCard && hasPair) {
+            strength++;
+        }
+
         if (hasTopCard) {
             strength++;
         }
