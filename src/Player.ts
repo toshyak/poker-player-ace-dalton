@@ -17,28 +17,29 @@ export class Player {
     const minimumRaise = gameState.minimum_raise;
     const pot = gameState.pot;
 
-    if (communityCards.length > 0) {
+    const enableFetching = false;
+    if (communityCards.length > 0 && enableFetching) {
       // community cards are available
       const knownCards = [...communityCards, ...holeCards];
       if (knownCards.length >= 5) {
         type Hand = Array<{ rank: string; suit: string }>;
         const timeoutPromise = new Promise((resolve) => {
-            setTimeout(resolve, 2000)
-        })
+          setTimeout(resolve, 2000);
+        });
         const checkRanks = async (cards: Hand) => {
-            const query = new URLSearchParams();
-            query.set("cards", JSON.stringify(cards));
+          const query = new URLSearchParams();
+          query.set("cards", JSON.stringify(cards));
 
-            const response = await fetch(
-                `https://rainman.leanpoker.org/?${query.toString()}`
-            );
-            if (response.ok) {
-                const data = await response.json();
-                const rank = data.rank;
-                betCallback(rank * 100);
-            }
+          const response = await fetch(
+            `https://rainman.leanpoker.org/?${query.toString()}`
+          );
+          if (response.ok) {
+            const data = await response.json();
+            const rank = data.rank;
+            betCallback(rank * 100);
+          }
         };
-        Promise.race([checkRanks, timeoutPromise])
+        Promise.race([checkRanks, timeoutPromise]);
         betCallback(50);
       }
     } else {
