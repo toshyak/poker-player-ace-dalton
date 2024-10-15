@@ -77,7 +77,7 @@ export class Player {
     // Check for a pair in hole cards or with community cards
     const hasPair =
       holeRanks[0] === holeRanks[1] ||
-      allCards.some((card) => holeRanks.includes(card.rank));
+      allCards.every((card) => holeRanks.includes(card.rank));
 
     const hasHighCard = holeCards.some((card) => highRanks.includes(card.rank));
 
