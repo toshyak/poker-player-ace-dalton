@@ -64,16 +64,16 @@ export class Player {
             console.log('STRATEGY: pre-flop');
 
             // Calculate hand strength (simplified: high cards or pair)
-            const strongHandValue = this.getStrongHandValue(
-                holeCards,
-                communityCards
-            );
+            const [strongHandValue, isTopHand] =
+                this.getStrongHandValue(holeCards);
 
-            // If the hand is strong, bet aggressively
-            if (strongHandValue > 0) {
+            // If the hand is topHand, bet aggressively
+            if (isTopHand) {
                 const raiseAmount =
                     currentBuyIn + minimumRaise * strongHandValue;
                 betCallback(raiseAmount);
+            } else if (strongHandValue > 1) {
+                betCallback(currentBuyIn);
             } else {
                 // // Bluff occasionally or fold
                 // const shouldBluff = Math.random() > 0.8; // 20% bluff
@@ -89,40 +89,45 @@ export class Player {
     }
 
     // Simplified hand strength calculation
-    private getStrongHandValue(
-        holeCards: any[],
-        communityCards: any[]
-    ): number {
+    private getStrongHandValue(holeCards: any[]): [number, boolean] {
         let strength = 0;
 
         const highRanks = ['10', 'J', 'Q', 'K', 'A'];
+        const topRanks = ['Q', 'K', 'A'];
 
         // Look for pairs, high cards, or potential straights/flushes
         const holeRanks = holeCards.map((card) => card.rank);
-        const allCards = [...holeCards, ...communityCards];
         const holeSuits = holeCards.map((card) => card.suit);
 
         // Check for a pair in hole cards or with community cards
         const hasPair =
             holeRanks[0] === holeRanks[1] ||
-            allCards.every((card) => holeRanks.includes(card.rank));
+            holeCards.every((card) => holeRanks.includes(card.rank));
 
         const hasHighCard = holeCards.some((card) =>
             highRanks.includes(card.rank)
         );
+        const hasTopCard = holeCards.some((card) =>
+            topRanks.includes(card.rank)
+        );
+
+        const allTopCards = holeCards.every((card) =>
+            topRanks.includes(card.rank)
+        );
+
         const hasSameSuit = holeSuits[0] === holeSuits[1];
 
         if (hasPair) {
             strength = strength + 2;
         }
-        if (hasHighCard) {
+        if (hasTopCard) {
             strength++;
         }
         if (hasSameSuit) {
             strength++;
         }
 
-        return strength;
+        return [strength, allTopCards && hasPair];
     }
 
     public showdown(gameState: any): void {
