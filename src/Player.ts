@@ -18,15 +18,18 @@ export class Player {
     const pot = gameState.pot;
 
     if (communityCards.length > 0) {
-      console.log("strategy: post-flop");
-      const enableFetching = false;
+      console.log("STRATEGY: post-flop");
+      const enableFetching = true;
       if (enableFetching) {
         // community cards are available
         const knownCards = [...communityCards, ...holeCards];
         if (knownCards.length >= 5) {
           type Hand = Array<{ rank: string; suit: string }>;
           const timeoutPromise = new Promise((resolve) => {
-            setTimeout(resolve, 2000);
+            setTimeout(() => {
+              console.log("STRATEGY: post-flop: timeout on network call");
+              resolve(null);
+            }, 2000);
           });
           const checkRanks = async (cards: Hand) => {
             const query = new URLSearchParams();
@@ -37,6 +40,10 @@ export class Player {
             );
             if (response.ok) {
               const data = await response.json();
+              console.log(
+                "STRATEGY: post-flop: received response",
+                JSON.stringify(data, null, 2)
+              );
               const rank = data.rank;
               betCallback(rank * 100);
             }
@@ -47,7 +54,7 @@ export class Player {
       }
     } else {
       // pre-flop
-      console.log("strategy: pre-flop");
+      console.log("STRATEGY: pre-flop");
 
       // Calculate hand strength (simplified: high cards or pair)
       const isStrongHand = this.hasStrongHand(holeCards, communityCards);
@@ -88,7 +95,9 @@ export class Player {
     return hasPair || hasHighCard;
   }
 
-  public showdown(gameState: any): void {}
+  public showdown(gameState: any): void {
+    console.log("STRATEGY: showdown");
+  }
 }
 
 export default Player;
