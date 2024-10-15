@@ -88,49 +88,50 @@ export class Player {
         }
     }
 
-    // Simplified hand strength calculation
+    // Improved hand strength calculation
     private getStrongHandValue(holeCards: any[]): [number, boolean] {
-        let strength = 0;
+        const handStrengthChart: Record<string, number> = {
+            'AA': 10, 'KK': 9, 'QQ': 8, 'JJ': 7, 'AKs': 6, 'AQs': 5, 'AJs': 4, 'KQs': 3, 'AK': 2, 'TT': 1,
+            '99': 9, '88': 8, '77': 7, '66': 6, '55': 5, '44': 4, '33': 3, '22': 2,
+            'KJs': 5, 'QJs': 4, 'JTs': 3, 'T9s': 2, '98s': 1,
+            'KTs': 4, 'QTs': 3, 'J9s': 2, 'T8s': 1,
+            'K9s': 3, 'Q9s': 2, 'J8s': 1,
+            'K8s': 2, 'Q8s': 1,
+            'K7s': 1,
+            'AQ': 5, 'AJ': 4, 'KQ': 3, 'KJ': 2, 'QJ': 1,
+            'AT': 3, 'KT': 2, 'QT': 1,
+            'A9': 2, 'K9': 1,
+            'A8': 1,
+        };
+
+        const [card1, card2] = holeCards;
+        const rank1 = card1.rank;
+        const rank2 = card2.rank;
+        const suited = card1.suit === card2.suit ? 's' : '';
+
+        const handKey = rank1 + rank2 + suited;
+        const reverseHandKey = rank2 + rank1 + suited;
+
+        const strength = handStrengthChart[handKey] || handStrengthChart[reverseHandKey] || 0;
 
         const highRanks = ['10', 'J', 'Q', 'K', 'A'];
         const topRanks = ['Q', 'K', 'A'];
 
-        // Look for pairs, high cards, or potential straights/flushes
         const holeRanks = holeCards.map((card) => card.rank);
         const holeSuits = holeCards.map((card) => card.suit);
 
-        // Check for a pair in hole cards or with community cards
-        const hasPair = holeRanks[0] === holeRanks[1]
-
-        const hasHighCard = holeCards.some((card) =>
-            highRanks.includes(card.rank)
-        );
-
-        const hasTopCard = holeCards.some((card) =>
-            topRanks.includes(card.rank)
-        );
-
-        const allTopCards = holeCards.every((card) =>
-            topRanks.includes(card.rank)
-        );
-
+        const hasPair = holeRanks[0] === holeRanks[1];
+        const hasHighCard = holeCards.some((card) => highRanks.includes(card.rank));
+        const hasTopCard = holeCards.some((card) => topRanks.includes(card.rank));
+        const allTopCards = holeCards.every((card) => topRanks.includes(card.rank));
         const hasSameSuit = holeSuits[0] === holeSuits[1];
 
-        if (hasPair) {
-            strength++;
-        }
-        if (hasHighCard && hasPair) {
-            strength++;
-        }
+        let additionalStrength = 0;
+        if (hasPair) additionalStrength += 2;
+        if (hasTopCard) additionalStrength++;
+        if (hasSameSuit) additionalStrength++;
 
-        if (hasTopCard) {
-            strength++;
-        }
-        if (hasSameSuit) {
-            strength++;
-        }
-
-        return [strength, allTopCards && hasPair];
+        return [strength + additionalStrength, allTopCards && hasPair];
     }
 
     public showdown(gameState: any): void {
