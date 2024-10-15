@@ -87,20 +87,12 @@ export class Player {
                                 JSON.stringify(data, null, 2)
                             );
                             const rank = data.rank;
-                            return rank;
-                        }
-                    };
-                    Promise.race([checkRanks, timeoutPromise]).then(
-                        //@ts-expect-error:
-                        (rank: number | null) => {
-                            if (rank === null) {
-                            betCallback(50);
-                            return
-                            }
                             betCallback(rank * 100);
                         }
-                    );
+                    };
+                    Promise.race([checkRanks, timeoutPromise]);
                 }
+                betCallback(50);
             }
         } else {
             // pre-flop
