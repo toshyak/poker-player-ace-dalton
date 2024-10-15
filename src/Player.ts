@@ -1,8 +1,8 @@
 export class Player {
-    public async betRequest(
+    public betRequest(
         gameState: any,
         betCallback: (bet: number) => void
-    ): Promise<void> {
+    ): void {
         console.log(`betRequest::GAME_ID::${gameState.game_id}::round::${gameState.round}`);
         //get our player
         const myPlayer = gameState.players.find(
