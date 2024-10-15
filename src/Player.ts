@@ -3,6 +3,7 @@ export class Player {
         gameState: any,
         betCallback: (bet: number) => void
     ): Promise<void> {
+        console.log(`betRequest::GAME_ID::${gameState.game_id}::round::${gameState.round}`);
         //get our player
         const myPlayer = gameState.players.find(
             (player: any) => player.hole_cards
@@ -83,9 +84,9 @@ export class Player {
 
     // Simplified hand strength calculation
     private getStrongHandValue(holeCards: any[], communityCards: any[]): number {
-        
+
         let strength = 0
-      
+
         const highRanks = ['10', 'J', 'Q', 'K', 'A'];
 
         // Look for pairs, high cards, or potential straights/flushes
@@ -111,7 +112,7 @@ export class Player {
     }
 
     public showdown(gameState: any): void {
-        console.log('STRATEGY: showdown');
+        console.log(`showdown::GAME_ID::${gameState.game_id}::round::${gameState.round}`);
     }
 }
 
