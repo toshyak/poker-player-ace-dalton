@@ -10,7 +10,7 @@ export function preflopbet(holeCards: any[], gameState: GameState): number {
     if (handValue >= 0.9) {
         // our hand is strong, we don't care about other cards and ready to go all in
         if (currentBuyIn < 10 * smallBlind) {
-          const raiseAmount = currentBuyIn + minimumRaise;
+          const raiseAmount = currentBuyIn + minimumRaise * 2;
           return raiseAmount;
         } else {
           return currentBuyIn;
