@@ -45,7 +45,7 @@ export class Player {
               `https://rainman.leanpoker.org/?${query.toString()}`
             );
             if (response.ok) {
-              console.log("POSTFLOP-1::Response OK");
+              console.log("REQUEST::Response OK");
               const data = await response.json();
               const rank = data.rank;
               return rank
@@ -54,13 +54,18 @@ export class Player {
           };
           Promise.race([checkRanks, timeoutPromise]).then((rank) => {
             if (typeof rank === "number") {
-              console.log(`POSTFLOP-1::MyCards:${JSON.stringify(holeCards)}::TableCards:${JSON.stringify(communityCards)}::POT::${pot}::BETTING::${rank * 100}}`);
-              betCallback(rank * 100);
+              const toBet = rank / 10 * myPlayer!.stack
+              if (typeof rank === "number") {
+                console.log(`POSTFLOP-1::MyCards:${JSON.stringify(holeCards)}::TableCards:${JSON.stringify(communityCards)}::POT::${pot}::BETTING::${toBet}}`);
+                betCallback(toBet);
+              } else {
+                console.log(`POSTFLOP-5::MyCards:${JSON.stringify(holeCards)}::TableCards:${JSON.stringify(communityCards)}::POT::${pot}::BETTING::${rank * 10}}`);
+                betCallback(rank * 10);
+              }
             } else {
               console.log(`POSTFLOP-2::MyCards:${JSON.stringify(holeCards)}::TableCards:${JSON.stringify(communityCards)}::POT::${pot}::BETTING::50}`);
               betCallback(50);
             }
-
           });
         } else {
           console.log(`POSTFLOP-3::MyCards:${JSON.stringify(holeCards)}::TableCards:${JSON.stringify(communityCards)}::POT::${pot}::BETTING::50`);
