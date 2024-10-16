@@ -43,7 +43,7 @@ export class Player {
             console.log("REQUEST::", `https://rainman.leanpoker.org/?${query.toString()}`);
 
             const response = await fetch(
-              `https://rainman.leanpoker.org/?${query.toString()}`
+              `https://rainman.leanpoker.org/?cards=${JSON.stringify(cards)}`
             );
             if (response.ok) {
               console.log("REQUEST::Response OK");
@@ -76,7 +76,7 @@ export class Player {
       } else {
         const rank = getHandRank(knownCards as any);
         const toBet = rank / 10 * myPlayer!.stack
-        console.log(`POSTFLOP-4::MyCards:${JSON.stringify(holeCards)}::TableCards:${JSON.stringify(communityCards)}::POT::${pot}::BETTING::${toBet}`);
+        console.log(`POSTFLOP-4::Rank::${rank}::MyCards:${JSON.stringify(holeCards)}::TableCards:${JSON.stringify(communityCards)}::POT::${pot}::BETTING::${toBet}`);
         betCallback(toBet);
       }
     } else {
