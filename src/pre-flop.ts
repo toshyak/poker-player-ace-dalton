@@ -29,6 +29,11 @@ export function preflopbet(holeCards: any[], gameState: GameState): number {
           return currentBuyIn;
         }
     }
+    // don't fold when we are on the small blind and just need to add to the current bet
+    if (currentBuyIn === smallBlind) {
+      return currentBuyIn;
+    }
+
 
     return 0;
 }
