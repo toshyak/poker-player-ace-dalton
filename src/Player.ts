@@ -25,7 +25,7 @@ export class Player {
     if (communityCards.length > 0) {
       // POST-flop
 
-      const enableFetching = true;
+      const enableFetching = false;
       const knownCards = [...communityCards, ...holeCards];
       if (enableFetching) {
         // community cards are available
@@ -75,8 +75,9 @@ export class Player {
         }
       } else {
         const rank = getHandRank(knownCards as any);
-        console.log(`POSTFLOP-4::MyCards:${JSON.stringify(holeCards)}::TableCards:${JSON.stringify(communityCards)}::POT::${pot}::BETTING::${rank * 100}`);
-        betCallback(rank * 100);
+        const toBet = rank / 10 * myPlayer!.stack
+        console.log(`POSTFLOP-4::MyCards:${JSON.stringify(holeCards)}::TableCards:${JSON.stringify(communityCards)}::POT::${pot}::BETTING::${toBet}`);
+        betCallback(toBet);
       }
     } else {
       // pre-flop
