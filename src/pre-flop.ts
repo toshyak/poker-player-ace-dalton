@@ -17,7 +17,7 @@ export function preflopbet(holeCards: any[], gameState: GameState): number {
         }
     } else if (handValue >= 0.72) {
         // Hand is good, but going all in is risky, especially in the early rounds
-        if (currentBuyIn < 5 * smallBlind) {
+        if (currentBuyIn <= 5 * smallBlind) {
           const raiseAmount = currentBuyIn + minimumRaise;
           return raiseAmount;
         } else {
@@ -25,7 +25,7 @@ export function preflopbet(holeCards: any[], gameState: GameState): number {
         }
     } else if (handValue >= 0.41) {
         // Hand is weak, but we can call the current bet
-        if (currentBuyIn < 2 * smallBlind) {
+        if (currentBuyIn <= 2 * smallBlind) {
           return currentBuyIn;
         }
     }
