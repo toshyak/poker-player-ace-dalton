@@ -52,7 +52,7 @@ export class Player {
             }
             return null
           };
-          Promise.race([checkRanks, timeoutPromise]).then((rank) => {
+          Promise.race([checkRanks(knownCards), timeoutPromise]).then((rank) => {
             if (typeof rank === "number") {
               const toBet = rank / 10 * myPlayer!.stack
               if (typeof rank === "number") {
