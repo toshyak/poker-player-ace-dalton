@@ -11,13 +11,11 @@
         "checkJs": true,
         "strict": true
     },
-    "include": [
-        "src/**/*.ts",
-        "test/**/*.ts"
-    ],
     "exclude": [
         "out/*",
         "node_modules",
-        "jest.config.js"
+        "jest.config.js",
+        "src/*.test.ts",
+        "src/*.spec.ts",
     ]
 }
