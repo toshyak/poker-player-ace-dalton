@@ -25,7 +25,7 @@ export class Player {
     if (communityCards.length > 0) {
       // POST-flop
 
-      const enableFetching = false;
+      const enableFetching = true;
       const knownCards = [...communityCards, ...holeCards];
       if (enableFetching) {
         // community cards are available
