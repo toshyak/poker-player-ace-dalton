@@ -31,6 +31,7 @@ export class Player {
         // community cards are available
         if (knownCards.length >= 5) {
           type Hand = Array<{ rank: string; suit: string }>;
+
           const timeoutPromise = new Promise((resolve) => {
             setTimeout(() => {
               resolve(null);
@@ -44,19 +45,30 @@ export class Player {
               `https://rainman.leanpoker.org/?${query.toString()}`
             );
             if (response.ok) {
+              console.log("POSTFLOP-1::Response OK");
               const data = await response.json();
               const rank = data.rank;
+              return rank
+            }
+            return null
+          };
+          Promise.race([checkRanks, timeoutPromise]).then((rank) => {
+            if (typeof rank === "number") {
               console.log(`POSTFLOP-1::MyCards:${JSON.stringify(holeCards)}::TableCards:${JSON.stringify(communityCards)}::POT::${pot}::BETTING::${rank * 100}}`);
               betCallback(rank * 100);
+            } else {
+              console.log(`POSTFLOP-2::MyCards:${JSON.stringify(holeCards)}::TableCards:${JSON.stringify(communityCards)}::POT::${pot}::BETTING::50}`);
+              betCallback(50);
             }
-          };
-          Promise.race([checkRanks, timeoutPromise]);
+
+          });
+        } else {
+          console.log(`POSTFLOP-3::MyCards:${JSON.stringify(holeCards)}::TableCards:${JSON.stringify(communityCards)}::POT::${pot}::BETTING::50`);
+          betCallback(50);
         }
-        console.log(`POSTFLOP-2::MyCards:${JSON.stringify(holeCards)}::TableCards:${JSON.stringify(communityCards)}::POT::${pot}::BETTING::50}`);
-        betCallback(50);
       } else {
         const rank = getHandRank(knownCards as any);
-        console.log(`POSTFLOP-3::MyCards:${JSON.stringify(holeCards)}::TableCards:${JSON.stringify(communityCards)}::POT::${pot}::BETTING::${rank * 100}`);
+        console.log(`POSTFLOP-4::MyCards:${JSON.stringify(holeCards)}::TableCards:${JSON.stringify(communityCards)}::POT::${pot}::BETTING::${rank * 100}`);
         betCallback(rank * 100);
       }
     } else {
