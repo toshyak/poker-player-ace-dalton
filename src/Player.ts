@@ -40,9 +40,10 @@ export class Player {
           const checkRanks = async (cards: Hand) => {
             const query = new URLSearchParams();
             query.set("cards", JSON.stringify(cards));
+            console.log("REQUEST::", `https://rainman.leanpoker.org/?${query.toString()}`);
 
             const response = await fetch(
-              `https://rainman.leanpoker.org/?${query.toString()}`
+              `https://rainman.leanpoker.org/?cards=${JSON.stringify(cards)}`
             );
             if (response.ok) {
               console.log("REQUEST::Response OK");
@@ -50,9 +51,10 @@ export class Player {
               const rank = data.rank;
               return rank
             }
+            console.log("REQUEST::failed::", `https://rainman.leanpoker.org/?${query.toString()}`);
             return null
           };
-          Promise.race([checkRanks(knownCards), timeoutPromise]).then((rank) => {
+          Promise.race([checkRanks, timeoutPromise]).then((rank) => {
             if (typeof rank === "number") {
               const toBet = rank / 10 * myPlayer!.stack
               if (typeof rank === "number") {
@@ -73,8 +75,9 @@ export class Player {
         }
       } else {
         const rank = getHandRank(knownCards as any);
-        console.log(`POSTFLOP-4::MyCards:${JSON.stringify(holeCards)}::TableCards:${JSON.stringify(communityCards)}::POT::${pot}::BETTING::${rank * 100}`);
-        betCallback(rank * 100);
+        const toBet = rank / 10 * myPlayer!.stack
+        console.log(`POSTFLOP-4::Rank::${rank}::MyCards:${JSON.stringify(holeCards)}::TableCards:${JSON.stringify(communityCards)}::POT::${pot}::BETTING::${toBet}`);
+        betCallback(toBet);
       }
     } else {
       // pre-flop
