@@ -6,9 +6,6 @@ export class Player {
     gameState: GameState,
     betCallback: (bet: number) => void
   ): void {
-    console.log(
-      `betRequest::GAME_ID::${gameState.game_id}::round::${gameState.round}`
-    );
     //get our player
     const myPlayer = gameState.players.find((player: any) => player.hole_cards);
 
@@ -24,7 +21,8 @@ export class Player {
     const pot = gameState.pot;
 
     if (communityCards.length > 0) {
-      console.log("STRATEGY: post-flop");
+      // POST-flop
+
       const enableFetching = true;
       const knownCards = [...communityCards, ...holeCards];
       if (enableFetching) {
@@ -33,7 +31,6 @@ export class Player {
           type Hand = Array<{ rank: string; suit: string }>;
           const timeoutPromise = new Promise((resolve) => {
             setTimeout(() => {
-              console.log("STRATEGY: post-flop: timeout on network call");
               resolve(null);
             }, 2000);
           });
@@ -46,24 +43,22 @@ export class Player {
             );
             if (response.ok) {
               const data = await response.json();
-              console.log(
-                "STRATEGY: post-flop: received response",
-                JSON.stringify(data, null, 2)
-              );
               const rank = data.rank;
+              console.log(`POSTFLOP-1::MyCards:${JSON.stringify(holeCards)}::POT::${pot}::BETTING::${rank * 100}}`);
               betCallback(rank * 100);
             }
           };
           Promise.race([checkRanks, timeoutPromise]);
         }
+        console.log(`POSTFLOP-2::MyCards:${JSON.stringify(holeCards)}::POT::${pot}::BETTING::50}`);
         betCallback(50);
       } else {
         const rank = getHandRank(knownCards as any);
+        console.log(`POSTFLOP-3::MyCards:${JSON.stringify(holeCards)}::POT::${pot}::BETTING::${rank * 100}`);
         betCallback(rank * 100);
       }
     } else {
       // pre-flop
-      console.log("STRATEGY: pre-flop");
 
       // Calculate hand strength (simplified: high cards or pair)
       const [strongHandValue, isTopHand] = this.getStrongHandValue(holeCards);
@@ -73,8 +68,10 @@ export class Player {
         const raiseAmount =
           currentBuyIn + minimumRaise * (1 + strongHandValue / 10);
         betCallback(raiseAmount);
+        console.log(`PREFLOP-1::MyCards:${JSON.stringify(holeCards)}::POT::${pot}::BETTING::${raiseAmount}`);
       } else if (strongHandValue > 1) {
         betCallback(currentBuyIn);
+        console.log(`PREFLOP-2::MyCards:${JSON.stringify(holeCards)}::POT::${pot}::BETTING::${currentBuyIn}`);
       } else {
         // // Bluff occasionally or fold
         // const shouldBluff = Math.random() > 0.8; // 20% bluff
@@ -83,6 +80,7 @@ export class Player {
         //     betCallback(bluffRaise);
         // } else {
         //     // Fold if weak hand
+        console.log(`PREFLOP-3::MyCards:${JSON.stringify(holeCards)}::POT::${pot}::BETTING::${0}`);
         betCallback(0);
         // }
       }
@@ -129,9 +127,6 @@ export class Player {
   }
 
   public showdown(gameState: any): void {
-    console.log(
-      `showdown::GAME_ID::${gameState.game_id}::round::${gameState.round}`
-    );
   }
 }
 
