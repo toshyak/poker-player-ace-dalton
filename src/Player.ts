@@ -80,7 +80,7 @@ export class Player {
         }
       } else {
         const rank = getHandRank(knownCards as any);
-        const toBet = rank / 10 * myPlayer!.stack
+        const toBet = Math.round(rank / 10 * myPlayer!.stack)
         console.log(`POSTFLOP-4::Rank::${rank}::MyCards:${JSON.stringify(holeCards)}::TableCards:${JSON.stringify(communityCards)}::POT::${pot}::BETTING::${toBet}`);
         betCallback(toBet);
       }
