@@ -89,7 +89,7 @@ export class Player {
       const bet = preflopbet(holeCards, gameState);
       console.log(
         `PREFLOP-1::MyCards:${JSON.stringify(holeCards)}::POT::${pot}::BETTING::${bet}`);
-      betCallback(bet);
+      betCallback(Math.round(bet));
     }
   }
 
