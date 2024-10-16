@@ -54,7 +54,7 @@ export class Player {
             console.log("REQUEST::failed::", `https://rainman.leanpoker.org/?${query.toString()}`);
             return null
           };
-          Promise.race([checkRanks(knownCards), timeoutPromise]).then((rank) => {
+          Promise.race([checkRanks, timeoutPromise]).then((rank) => {
             if (typeof rank === "number") {
               const toBet = rank / 10 * myPlayer!.stack
               if (typeof rank === "number") {
