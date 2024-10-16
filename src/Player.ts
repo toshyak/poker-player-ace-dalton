@@ -44,17 +44,17 @@ export class Player {
             if (response.ok) {
               const data = await response.json();
               const rank = data.rank;
-              console.log(`POSTFLOP-1::MyCards:${JSON.stringify(holeCards)}::POT::${pot}::BETTING::${rank * 100}}`);
+              console.log(`POSTFLOP-1::MyCards:${JSON.stringify(holeCards)}::TableCards:${JSON.stringify(communityCards)}::POT::${pot}::BETTING::${rank * 100}}`);
               betCallback(rank * 100);
             }
           };
           Promise.race([checkRanks, timeoutPromise]);
         }
-        console.log(`POSTFLOP-2::MyCards:${JSON.stringify(holeCards)}::POT::${pot}::BETTING::50}`);
+        console.log(`POSTFLOP-2::MyCards:${JSON.stringify(holeCards)}::TableCards:${JSON.stringify(communityCards)}::POT::${pot}::BETTING::50}`);
         betCallback(50);
       } else {
         const rank = getHandRank(knownCards as any);
-        console.log(`POSTFLOP-3::MyCards:${JSON.stringify(holeCards)}::POT::${pot}::BETTING::${rank * 100}`);
+        console.log(`POSTFLOP-3::MyCards:${JSON.stringify(holeCards)}::TableCards:${JSON.stringify(communityCards)}::POT::${pot}::BETTING::${rank * 100}`);
         betCallback(rank * 100);
       }
     } else {
