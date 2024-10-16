@@ -25,7 +25,7 @@ export class Player {
     if (communityCards.length > 0) {
       // POST-flop
 
-      const enableFetching = Math.random() > 0.9;
+      const enableFetching = Math.random() > 0.8;
       const knownCards = [...communityCards, ...holeCards];
       if (enableFetching) {
         // community cards are available
@@ -59,7 +59,7 @@ export class Player {
               return null
             }
           };
-          Promise.race([checkRanks, timeoutPromise]).then((rank) => {
+          Promise.race([checkRanks(knownCards), timeoutPromise]).then((rank) => {
             if (typeof rank === "number") {
               const toBet = rank / 10 * myPlayer!.stack
               if (typeof rank === "number") {
