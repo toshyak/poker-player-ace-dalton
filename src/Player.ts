@@ -25,7 +25,7 @@ export class Player {
     if (communityCards.length > 0) {
       // POST-flop
 
-      const enableFetching = true;
+      const enableFetching = Math.random() > 0.9;
       const knownCards = [...communityCards, ...holeCards];
       if (enableFetching) {
         // community cards are available
@@ -42,17 +42,22 @@ export class Player {
             query.set("cards", JSON.stringify(cards));
             console.log("REQUEST::", `https://rainman.leanpoker.org/?${query.toString()}`);
 
-            const response = await fetch(
-              `https://rainman.leanpoker.org/?cards=${JSON.stringify(cards)}`
-            );
-            if (response.ok) {
-              console.log("REQUEST::Response OK");
-              const data = await response.json();
-              const rank = data.rank;
-              return rank
+            try {
+              const response = await fetch(
+                `https://rainman.leanpoker.org/?cards=${JSON.stringify(cards)}`
+              );
+              if (response.ok) {
+                console.log("REQUEST::Response OK");
+                const data = await response.json();
+                const rank = data.rank;
+                return rank
+              }
+              console.log("REQUEST::failed::", `https://rainman.leanpoker.org/?${query.toString()}`);
+              return null
+            } catch (e) {
+              console.log("REQUEST::failed::", `https://rainman.leanpoker.org/?${query.toString()}`);
+              return null
             }
-            console.log("REQUEST::failed::", `https://rainman.leanpoker.org/?${query.toString()}`);
-            return null
           };
           Promise.race([checkRanks, timeoutPromise]).then((rank) => {
             if (typeof rank === "number") {
