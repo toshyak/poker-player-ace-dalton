@@ -59,7 +59,7 @@ export function getHandWeight(card1: CardType, card2: CardType): number {
     "7": 7,
     "8": 8,
     "9": 9,
-    T: 10,
+    "10": 10,
     J: 11,
     Q: 12,
     K: 13,
