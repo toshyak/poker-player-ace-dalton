@@ -168,7 +168,7 @@ export class Player {
 
       // If the hand is topHand, bet aggressively
       if (isTopHand) {
-        const raiseAmount = currentBuyIn + minimumRaise * strongHandValue;
+        const raiseAmount = currentBuyIn + minimumRaise * (1 + strongHandValue/10);
         betCallback(raiseAmount);
       } else if (strongHandValue > 1) {
         betCallback(currentBuyIn);
